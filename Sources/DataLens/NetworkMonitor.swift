@@ -67,11 +67,12 @@ final class NetworkMonitor: NSObject, ObservableObject, CLLocationManagerDelegat
     private var pendingApps: [String: (hour: Int, ssid: String, app: String, bin: Double, bout: Double)] = [:]
 
     var ssidAccessible: Bool {
-        locationStatus == .authorizedAlways
+        Demo.on || locationStatus == .authorizedAlways
     }
 
     /// Name used to file traffic that is happening right now.
     var currentKey: String {
+        if Demo.on { return Demo.ssid }
         if let s = wifi.ssid, !s.isEmpty { return s }
         return wifi.powerOn ? "Wi-Fi (name hidden)" : "Wi-Fi (off)"
     }
@@ -131,8 +132,8 @@ final class NetworkMonitor: NSObject, ObservableObject, CLLocationManagerDelegat
         var info = WifiInfo()
         info.interfaceName = iface.interfaceName ?? "en0"
         info.powerOn = iface.powerOn()
-        info.ssid = iface.ssid()
-        info.bssid = iface.bssid()
+        info.ssid = Demo.on ? Demo.ssid : iface.ssid()
+        info.bssid = Demo.on ? nil : iface.bssid()
         info.rssi = iface.rssiValue()
         info.noise = iface.noiseMeasurement()
         info.txRate = iface.transmitRate()
@@ -278,6 +279,7 @@ final class NetworkMonitor: NSObject, ObservableObject, CLLocationManagerDelegat
             e.bin += v.0; e.bout += v.1
             pendingApps[key] = e
         }
+        if Demo.on { talkers = Demo.talkers(); return }
         talkers = byApp.map { TalkerRate(name: $0.key, down: $0.value.0 / dt, up: $0.value.1 / dt) }
             .sorted { $0.total > $1.total }
             .prefix(8).map { $0 }

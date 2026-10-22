@@ -63,6 +63,10 @@ struct RootView: View {
         guard let dir = ProcessInfo.processInfo.environment["DATALENS_SNAPSHOT"] else { return }
         try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
         try? await Task.sleep(nanoseconds: 5_000_000_000)
+        if let w = NSApp.windows.first(where: { $0.isVisible }) {
+            w.setFrame(NSRect(x: 0, y: 0, width: 1320, height: 1500), display: true)
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+        }
         for p in Page.allCases {
             page = p
             try? await Task.sleep(nanoseconds: 6_000_000_000)

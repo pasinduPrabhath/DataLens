@@ -84,7 +84,8 @@ final class UsageDB: @unchecked Sendable {
     }()
 
     init() {
-        let path = Self.directory.appendingPathComponent("usage.sqlite").path
+        if Demo.on { try? FileManager.default.removeItem(atPath: Demo.databasePath) }
+        let path = Demo.on ? Demo.databasePath : Self.directory.appendingPathComponent("usage.sqlite").path
         db = SQLiteDB(path: path) ?? SQLiteDB(path: ":memory:")!
         db.exec("PRAGMA journal_mode=WAL")
         db.exec("CREATE TABLE IF NOT EXISTS totals(hour INTEGER, ssid TEXT, bin INTEGER, bout INTEGER, PRIMARY KEY(hour, ssid))")
@@ -92,6 +93,7 @@ final class UsageDB: @unchecked Sendable {
         db.exec("CREATE INDEX IF NOT EXISTS usage_hour ON usage(hour)")
         db.exec("CREATE TABLE IF NOT EXISTS storage_hist(ts INTEGER PRIMARY KEY, total INTEGER, free INTEGER, purgeable INTEGER)")
         db.exec("CREATE TABLE IF NOT EXISTS scan_snap(ts INTEGER, key TEXT, bytes INTEGER)")
+        if Demo.on { Demo.seed(self) }
     }
 
     // MARK: Writes
