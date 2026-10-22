@@ -29,18 +29,26 @@ Shown with demo data, not real usage.
 - S.M.A.R.T. status, health score, live read/write throughput, speed test
 - Wear counters (TB written, % life used) if [`smartmontools`](https://www.smartmontools.org) is installed
 
-## Run it
+## Install
 
-Requires macOS 14+ and Xcode / Swift 5.9+.
+1. Download **DataLens-1.0.0.dmg** from the [latest release](https://github.com/pasinduPrabhath/DataLens/releases/latest) (macOS 14+, Apple Silicon and Intel).
+2. Open it and drag **DataLens** into **Applications**.
+3. The app is not notarized by Apple (no paid developer account), so the first launch is blocked. Either:
+   - open **System Settings → Privacy & Security** and click **Open Anyway**, or
+   - run `xattr -dr com.apple.quarantine /Applications/DataLens.app` in Terminal.
+
+Then allow **Location** when asked and turn on **Start at login** in Settings.
+
+## Build from source
+
+Needs Xcode (or the Swift 5.9+ toolchain).
 
 ```bash
 git clone https://github.com/pasinduPrabhath/DataLens.git
 cd DataLens
-./build.sh --install     # builds, signs ad-hoc, copies to /Applications
-open /Applications/DataLens.app
+./build.sh --install        # universal build, copied to /Applications
+./scripts/make_dmg.sh       # optional: package build/DataLens-<version>.dmg
 ```
-
-Drop `--install` to just build `build/DataLens.app`.
 
 To try it with sample data instead of your own: `DATALENS_DEMO=1 .build/release/DataLens` (after `swift build -c release`).
 
