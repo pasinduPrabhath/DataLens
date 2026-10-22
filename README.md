@@ -64,6 +64,10 @@ To try it with sample data instead of your own: `DATALENS_DEMO=1 .build/release/
 - Wi-Fi only; Ethernet traffic is not counted.
 - All data stays local in `~/Library/Application Support/DataLens`.
 
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## License
 
 MIT
