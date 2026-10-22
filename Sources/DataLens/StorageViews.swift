@@ -727,7 +727,7 @@ struct SSDHealthView: View {
             SectionTitle(title: "Drive details", icon: "info.circle.fill")
             Grid(alignment: .leading, horizontalSpacing: 22, verticalSpacing: 8) {
                 GridRow { metric("Model", i.model); metric("Firmware", i.revision) }
-                GridRow { metric("Serial", i.serial); metric("Device", "/dev/" + i.bsd) }
+                GridRow { metric("Serial", Demo.on ? "••••••••••••" : i.serial); metric("Device", "/dev/" + i.bsd) }
                 GridRow { metric("Type", i.isSolidState ? "Solid state (NVMe)" : "Disk"); metric("TRIM", i.trim ? "Supported" : "Unknown") }
             }
         }

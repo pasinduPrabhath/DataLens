@@ -2,6 +2,17 @@
 
 A native macOS app (SwiftUI + Swift Charts) that shows where your **Wi-Fi data** and your **disk space** go.
 
+## Screenshots
+
+Shown with demo data, not real usage.
+
+| | |
+|---|---|
+| ![Overview](docs/screenshots/overview.png) **Overview** | ![Wi-Fi usage](docs/screenshots/wifi-usage.png) **Wi-Fi usage per network and app** |
+| ![Live network](docs/screenshots/live-network.png) **Live network** | ![Storage](docs/screenshots/storage.png) **Storage breakdown** |
+| ![Apps and space](docs/screenshots/apps.png) **Apps and their space** | ![Free up space](docs/screenshots/free-up-space.png) **Free up space** |
+| ![SSD health](docs/screenshots/ssd-health.png) **SSD health** | |
+
 ## Features
 
 **Network**
@@ -30,6 +41,8 @@ open /Applications/DataLens.app
 ```
 
 Drop `--install` to just build `build/DataLens.app`.
+
+To try it with sample data instead of your own: `DATALENS_DEMO=1 .build/release/DataLens` (after `swift build -c release`).
 
 ## Permissions
 

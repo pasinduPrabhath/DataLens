@@ -125,6 +125,15 @@ final class StorageStore: ObservableObject {
     init(usage: UsageDB) {
         self.usage = usage
         categories = Self.categoryDefinitions(home: home)
+        if Demo.on {
+            (categories, systemBytes) = Demo.categories(home: home)
+            apps = Demo.apps(); cleanup = Demo.cleanup(); bigFiles = Demo.bigFiles(); recentHeavy = Array(Demo.bigFiles().prefix(3))
+            snapshotCount = 2; lastScan = Date()
+            explorerStack = ["/Users/demo"]; explorerEntries = Demo.explorer()
+            changes = [StorageChange(name: "App · Docker", delta: 6_200_000_000), StorageChange(name: "Movies", delta: 4_100_000_000),
+                       StorageChange(name: "Caches", delta: -2_300_000_000)]
+            changesSince = Date().addingTimeInterval(-6 * 86400)
+        }
         refreshVolume()
         timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.refreshVolume() }
@@ -135,6 +144,11 @@ final class StorageStore: ObservableObject {
     // MARK: Volume
 
     func refreshVolume() {
+        if Demo.on {
+            volume = Demo.volume
+            history = usage.storageHistory()
+            return
+        }
         let keys: Set<URLResourceKey> = [.volumeTotalCapacityKey, .volumeAvailableCapacityKey, .volumeAvailableCapacityForImportantUsageKey]
         guard let v = try? URL(fileURLWithPath: home).resourceValues(forKeys: keys) else { return }
         var info = VolumeInfo()
