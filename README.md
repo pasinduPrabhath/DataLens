@@ -1,0 +1,48 @@
+# DataLens
+
+A native macOS app (SwiftUI + Swift Charts) that shows where your **Wi-Fi data** and your **disk space** go.
+
+## Features
+
+**Network**
+- Data usage per Wi-Fi network (by SSID) for 24 h / 7 d / 30 d / 12 months / all time
+- Per-app breakdown, hourly heatmap, monthly budget ring, auto-generated insights
+- Live up/down speed, signal details, apps talking right now, menu-bar readout
+
+**Storage**
+- Used-space breakdown by category, clickable treemap folder explorer
+- Per-app footprint (app + data + caches), free-space history, "what grew since last scan"
+- Free-up suggestions (caches, Xcode, simulators, `node_modules`, installers, big files). Nothing is deleted without a confirmation, and files go to the Trash.
+
+**SSD health**
+- S.M.A.R.T. status, health score, live read/write throughput, speed test
+- Wear counters (TB written, % life used) if [`smartmontools`](https://www.smartmontools.org) is installed
+
+## Run it
+
+Requires macOS 14+ and Xcode / Swift 5.9+.
+
+```bash
+git clone https://github.com/pasinduPrabhath/DataLens.git
+cd DataLens
+./build.sh --install     # builds, signs ad-hoc, copies to /Applications
+open /Applications/DataLens.app
+```
+
+Drop `--install` to just build `build/DataLens.app`.
+
+## Permissions
+
+- **Location Services**: macOS only reveals the Wi-Fi name to apps with this permission. Location itself is never read.
+- Everything else works without extra permissions.
+
+## How it works & limits
+
+- Per-network totals come from the Wi-Fi interface counters (every 2 s); per-app numbers from `nettop` (every 10 s), so very short-lived processes can be missed.
+- Tracking starts the first time DataLens runs and only while it runs. Enable **Start at login** in Settings. macOS keeps no per-network history to import.
+- Wi-Fi only; Ethernet traffic is not counted.
+- All data stays local in `~/Library/Application Support/DataLens`.
+
+## License
+
+MIT
