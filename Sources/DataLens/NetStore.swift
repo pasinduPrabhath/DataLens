@@ -90,7 +90,7 @@ final class NetStore: ObservableObject {
 
         if let top = snap.apps.first, snap.apps.count > 0 {
             let share = top.total / max(snap.apps.reduce(0) { $0 + $1.total }, 1)
-            out.append(("flame.fill", "\(top.name) used \(Fmt.percent(share)) of your tracked data (\(Fmt.bytes(top.total))).", Theme.orange))
+            out.append(("flame.fill", "\(top.name) used \(Fmt.percent(share)) of your tracked data (\(Fmt.bytes(top.total))).", Theme.cyan))
         }
         if let busiest = snap.series.max(by: { $0.total < $1.total }), busiest.total > 0 {
             let f = DateFormatter()

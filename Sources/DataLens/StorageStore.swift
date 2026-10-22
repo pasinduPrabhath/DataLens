@@ -151,22 +151,22 @@ final class StorageStore: ObservableObject {
     static func categoryDefinitions(home h: String) -> [StorageCategory] {
         func p(_ s: String) -> String { h + "/" + s }
         return [
-            StorageCategory(id: "apps", name: "Applications", icon: "square.grid.2x2.fill", color: Theme.blue, paths: ["/Applications"]),
-            StorageCategory(id: "docs", name: "Documents", icon: "doc.fill", color: Theme.cyan, paths: [p("Documents")]),
-            StorageCategory(id: "desktop", name: "Desktop", icon: "menubar.dock.rectangle", color: Color(red: 0.4, green: 0.9, blue: 0.9), paths: [p("Desktop")]),
-            StorageCategory(id: "downloads", name: "Downloads", icon: "arrow.down.circle.fill", color: Theme.green, paths: [p("Downloads")]),
-            StorageCategory(id: "movies", name: "Movies", icon: "film.fill", color: Theme.pink, paths: [p("Movies")]),
-            StorageCategory(id: "music", name: "Music", icon: "music.note", color: Theme.purple, paths: [p("Music")]),
-            StorageCategory(id: "pictures", name: "Photos & Pictures", icon: "photo.fill", color: Theme.orange, paths: [p("Pictures")]),
-            StorageCategory(id: "dev", name: "Developer (Xcode, simulators)", icon: "hammer.fill", color: Theme.yellow, paths: [p("Library/Developer")]),
-            StorageCategory(id: "caches", name: "Caches", icon: "clock.arrow.circlepath", color: Theme.red, paths: [p("Library/Caches")], note: "Rebuilt automatically by apps"),
-            StorageCategory(id: "support", name: "App Support Data", icon: "externaldrive.fill", color: Color(red: 0.55, green: 0.6, blue: 1.0), paths: [p("Library/Application Support")]),
-            StorageCategory(id: "containers", name: "App Containers", icon: "shippingbox.fill", color: Color(red: 0.8, green: 0.5, blue: 1.0), paths: [p("Library/Containers"), p("Library/Group Containers")]),
-            StorageCategory(id: "mail", name: "Mail & Messages", icon: "envelope.fill", color: Color(red: 0.4, green: 0.7, blue: 1.0), paths: [p("Library/Mail"), p("Library/Messages")]),
-            StorageCategory(id: "icloud", name: "iCloud Drive (local)", icon: "icloud.fill", color: Color(red: 0.55, green: 0.85, blue: 1.0), paths: [p("Library/Mobile Documents")]),
-            StorageCategory(id: "trash", name: "Trash", icon: "trash.fill", color: Color(red: 0.7, green: 0.7, blue: 0.75), paths: [p(".Trash")]),
-            StorageCategory(id: "otherhome", name: "Other files in Home", icon: "folder.fill", color: Color(red: 0.6, green: 0.65, blue: 0.75), paths: [h], note: "Hidden folders (.npm, .docker …) and everything else"),
-            StorageCategory(id: "syslib", name: "System libraries & tools", icon: "wrench.and.screwdriver.fill", color: Color(red: 0.5, green: 0.55, blue: 0.62), paths: ["/Library", "/opt", "/usr/local", "/private/var"], note: "/Library, Homebrew, swap files, logs"),
+            StorageCategory(id: "apps", name: "Applications", icon: "square.grid.2x2.fill", color: Theme.color(at: 0), paths: ["/Applications"]),
+            StorageCategory(id: "docs", name: "Documents", icon: "doc.fill", color: Theme.color(at: 1), paths: [p("Documents")]),
+            StorageCategory(id: "desktop", name: "Desktop", icon: "menubar.dock.rectangle", color: Theme.color(at: 2), paths: [p("Desktop")]),
+            StorageCategory(id: "downloads", name: "Downloads", icon: "arrow.down.circle.fill", color: Theme.color(at: 3), paths: [p("Downloads")]),
+            StorageCategory(id: "movies", name: "Movies", icon: "film.fill", color: Theme.color(at: 4), paths: [p("Movies")]),
+            StorageCategory(id: "music", name: "Music", icon: "music.note", color: Theme.color(at: 5), paths: [p("Music")]),
+            StorageCategory(id: "pictures", name: "Photos & Pictures", icon: "photo.fill", color: Theme.color(at: 6), paths: [p("Pictures")]),
+            StorageCategory(id: "dev", name: "Developer (Xcode, simulators)", icon: "hammer.fill", color: Theme.color(at: 7), paths: [p("Library/Developer")]),
+            StorageCategory(id: "caches", name: "Caches", icon: "clock.arrow.circlepath", color: Theme.color(at: 8), paths: [p("Library/Caches")], note: "Rebuilt automatically by apps"),
+            StorageCategory(id: "support", name: "App Support Data", icon: "externaldrive.fill", color: Theme.color(at: 9), paths: [p("Library/Application Support")]),
+            StorageCategory(id: "containers", name: "App Containers", icon: "shippingbox.fill", color: Theme.color(at: 10), paths: [p("Library/Containers"), p("Library/Group Containers")]),
+            StorageCategory(id: "mail", name: "Mail & Messages", icon: "envelope.fill", color: Theme.color(at: 11), paths: [p("Library/Mail"), p("Library/Messages")]),
+            StorageCategory(id: "icloud", name: "iCloud Drive (local)", icon: "icloud.fill", color: Theme.color(at: 12), paths: [p("Library/Mobile Documents")]),
+            StorageCategory(id: "trash", name: "Trash", icon: "trash.fill", color: Theme.color(at: 13), paths: [p(".Trash")]),
+            StorageCategory(id: "otherhome", name: "Other files in Home", icon: "folder.fill", color: Theme.color(at: 14), paths: [h], note: "Hidden folders (.npm, .docker …) and everything else"),
+            StorageCategory(id: "syslib", name: "System libraries & tools", icon: "wrench.and.screwdriver.fill", color: Theme.color(at: 15), paths: ["/Library", "/opt", "/usr/local", "/private/var"], note: "/Library, Homebrew, swap files, logs"),
         ]
     }
 

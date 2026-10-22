@@ -130,7 +130,7 @@ struct NetworkUsageView: View {
                      footnote: store.total > 0 ? Fmt.percent(store.snap.down / store.total) + " of total" : nil)
             StatTile(title: "Uploaded", value: store.snap.up, format: { Fmt.bytes($0) }, icon: "arrow.up.circle.fill", color: Theme.pink,
                      footnote: store.total > 0 ? Fmt.percent(store.snap.up / store.total) + " of total" : nil)
-            StatTile(title: "Daily average", value: avg, format: { Fmt.bytes($0) }, icon: "gauge.with.dots.needle.50percent", color: Theme.orange,
+            StatTile(title: "Daily average", value: avg, format: { Fmt.bytes($0) }, icon: "gauge.with.dots.needle.50percent", color: Theme.purple,
                      footnote: "per day")
         }
     }

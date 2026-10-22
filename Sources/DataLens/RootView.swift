@@ -177,13 +177,13 @@ struct OverviewView: View {
                 }
 
                 HStack(spacing: 14) {
-                    StatTile(title: "Used today", value: today.down + today.up, format: { Fmt.bytes($0) }, icon: "sun.max.fill", color: Theme.orange,
+                    StatTile(title: "Used today", value: today.down + today.up, format: { Fmt.bytes($0) }, icon: "sun.max.fill", color: Theme.cyan,
                              footnote: "↓ \(Fmt.bytes(today.down))  ↑ \(Fmt.bytes(today.up))")
                     StatTile(title: "This month", value: month, format: { Fmt.bytes($0) }, icon: "calendar", color: Theme.purple, footnote: "all Wi-Fi networks")
                     StatTile(title: "Free storage", value: Double(storage.volume.free), format: { Fmt.bytes($0) }, icon: "internaldrive.fill",
                              color: storage.volume.usedFraction > 0.85 ? Theme.red : Theme.green,
                              footnote: "\(Fmt.percent(storage.volume.usedFraction)) of \(Fmt.bytes(Double(storage.volume.total))) used")
-                    StatTile(title: "SSD health", value: Double(health.score), format: { String(Int($0)) + " / 100" }, icon: "heart.fill", color: Theme.pink,
+                    StatTile(title: "SSD health", value: Double(health.score), format: { String(Int($0)) + " / 100" }, icon: "heart.fill", color: Theme.cyan,
                              footnote: ssd.info.smartOK ? "S.M.A.R.T. verified" : ssd.info.smartStatus)
                 }
 

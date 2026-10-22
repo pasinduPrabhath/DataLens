@@ -324,7 +324,7 @@ struct StorageAppsView: View {
                     StatTile(title: "Apps", value: Double(store.apps.count), format: { String(Int($0)) }, icon: "app.fill", color: Theme.blue)
                     StatTile(title: "App bundles", value: Double(store.apps.reduce(0) { $0 + $1.appBytes }), format: { Fmt.bytes($0) }, icon: "shippingbox.fill", color: Theme.cyan)
                     StatTile(title: "Their data", value: Double(store.apps.reduce(0) { $0 + $1.dataBytes }), format: { Fmt.bytes($0) }, icon: "externaldrive.fill", color: Theme.purple)
-                    StatTile(title: "Their caches", value: Double(store.apps.reduce(0) { $0 + $1.cacheBytes }), format: { Fmt.bytes($0) }, icon: "clock.arrow.circlepath", color: Theme.orange)
+                    StatTile(title: "Their caches", value: Double(store.apps.reduce(0) { $0 + $1.cacheBytes }), format: { Fmt.bytes($0) }, icon: "clock.arrow.circlepath", color: Theme.pink)
                 }
 
                 HStack {
@@ -346,7 +346,7 @@ struct StorageAppsView: View {
                 } else {
                     VStack(spacing: 4) {
                         HStack(spacing: 14) {
-                            legendDot("App", Theme.blue); legendDot("Data", Theme.purple); legendDot("Caches", Theme.orange)
+                            legendDot("App", Theme.blue); legendDot("Data", Theme.purple); legendDot("Caches", Theme.pink)
                             Spacer()
                         }
                         .padding(.bottom, 6)
@@ -387,7 +387,7 @@ struct AppFootprintRow: View {
                     HStack(spacing: 1) {
                         Rectangle().fill(Theme.blue.gradient).frame(width: CGFloat(app.appBytes) * scale)
                         Rectangle().fill(Theme.purple.gradient).frame(width: CGFloat(app.dataBytes) * scale)
-                        Rectangle().fill(Theme.orange.gradient).frame(width: CGFloat(app.cacheBytes) * scale)
+                        Rectangle().fill(Theme.pink.gradient).frame(width: CGFloat(app.cacheBytes) * scale)
                         Spacer(minLength: 0)
                     }
                     .clipShape(Capsule())
@@ -397,13 +397,13 @@ struct AppFootprintRow: View {
                 HStack(spacing: 12) {
                     Text("App \(Fmt.bytes(Double(app.appBytes)))").foregroundStyle(Theme.blue)
                     Text("Data \(Fmt.bytes(Double(app.dataBytes)))").foregroundStyle(Theme.purple)
-                    Text("Caches \(Fmt.bytes(Double(app.cacheBytes)))").foregroundStyle(Theme.orange)
+                    Text("Caches \(Fmt.bytes(Double(app.cacheBytes)))").foregroundStyle(Theme.pink)
                     Spacer()
                     if hover {
                         Button("Reveal") { NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: app.path)]) }
                             .buttonStyle(GlowButtonStyle(color: Theme.blue))
                         if app.cacheBytes > 20_000_000 {
-                            Button("Clear caches") { store.trashAppCaches(app) }.buttonStyle(GlowButtonStyle(color: Theme.orange))
+                            Button("Clear caches") { store.trashAppCaches(app) }.buttonStyle(GlowButtonStyle(color: Theme.blue))
                         }
                     }
                 }
