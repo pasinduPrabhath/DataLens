@@ -6,9 +6,9 @@ cd "$(dirname "$0")"
 APP="build/DataLens.app"
 rm -rf build && mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
-echo "▸ Compiling (release)…"
-swift build -c release
-cp .build/release/DataLens "$APP/Contents/MacOS/DataLens"
+echo "▸ Compiling universal (arm64 + x86_64)…"
+swift build -c release --arch arm64 --arch x86_64
+cp "$(swift build -c release --arch arm64 --arch x86_64 --show-bin-path)/DataLens" "$APP/Contents/MacOS/DataLens"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 
 echo "▸ Generating icon…"
