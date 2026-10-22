@@ -4,29 +4,34 @@ import AppKit
 // MARK: - Palette
 
 enum Theme {
-    static let cyan = Color(red: 0.24, green: 0.84, blue: 1.00)
-    static let blue = Color(red: 0.36, green: 0.52, blue: 1.00)
-    static let purple = Color(red: 0.64, green: 0.42, blue: 1.00)
-    static let pink = Color(red: 1.00, green: 0.42, blue: 0.72)
-    static let orange = Color(red: 1.00, green: 0.62, blue: 0.28)
-    static let yellow = Color(red: 1.00, green: 0.84, blue: 0.30)
-    static let green = Color(red: 0.30, green: 0.90, blue: 0.58)
-    static let red = Color(red: 1.00, green: 0.36, blue: 0.40)
+    // One blue accent family + neutrals. Green / amber / red are reserved for status.
+    static let cyan = Color(red: 0.38, green: 0.64, blue: 1.00)    // primary blue
+    static let blue = Color(red: 0.28, green: 0.52, blue: 0.96)    // deeper blue
+    static let purple = Color(red: 0.52, green: 0.62, blue: 0.80)  // slate
+    static let pink = Color(red: 0.72, green: 0.82, blue: 0.98)    // light blue (secondary series)
+    static let orange = Color(red: 0.98, green: 0.68, blue: 0.30)  // warning
+    static let yellow = Color(red: 0.96, green: 0.80, blue: 0.38)  // caution
+    static let green = Color(red: 0.32, green: 0.80, blue: 0.56)   // healthy / safe
+    static let red = Color(red: 0.94, green: 0.40, blue: 0.42)     // danger
 
     static let down = cyan
     static let up = pink
 
-    static let bgTop = Color(red: 0.035, green: 0.04, blue: 0.09)
-    static let bgBottom = Color(red: 0.06, green: 0.05, blue: 0.13)
+    static let bgTop = Color(red: 0.050, green: 0.055, blue: 0.075)
+    static let bgBottom = Color(red: 0.070, green: 0.078, blue: 0.105)
 
-    static let palette: [Color] = [cyan, purple, pink, orange, green, blue, yellow, red,
-                                   Color(red: 0.45, green: 0.85, blue: 0.95),
-                                   Color(red: 0.80, green: 0.55, blue: 1.0)]
+    /// Categorical ramp: blues fading to slate, so charts stay calm but distinguishable.
+    static let palette: [Color] = [
+        Color(red: 0.38, green: 0.64, blue: 1.00), Color(red: 0.28, green: 0.52, blue: 0.96),
+        Color(red: 0.55, green: 0.76, blue: 1.00), Color(red: 0.20, green: 0.40, blue: 0.80),
+        Color(red: 0.52, green: 0.62, blue: 0.80), Color(red: 0.70, green: 0.80, blue: 0.95),
+        Color(red: 0.36, green: 0.46, blue: 0.64), Color(red: 0.62, green: 0.70, blue: 0.82),
+        Color(red: 0.24, green: 0.30, blue: 0.46), Color(red: 0.48, green: 0.54, blue: 0.66),
+    ]
 
     static func color(at index: Int) -> Color { palette[index % palette.count] }
 
-    static let accent = LinearGradient(colors: [cyan, blue, purple], startPoint: .leading, endPoint: .trailing)
-    static let hot = LinearGradient(colors: [orange, pink], startPoint: .leading, endPoint: .trailing)
+    static let accent = LinearGradient(colors: [cyan, blue], startPoint: .topLeading, endPoint: .bottomTrailing)
 }
 
 // MARK: - Formatting
@@ -79,19 +84,16 @@ struct AuroraBackground: View {
             LinearGradient(colors: [Theme.bgTop, Theme.bgBottom], startPoint: .top, endPoint: .bottom)
             GeometryReader { geo in
                 ZStack {
-                    blob(Theme.blue, size: 520)
+                    blob(Theme.blue, size: 560)
                         .offset(x: phase ? -geo.size.width * 0.25 : geo.size.width * 0.05,
                                 y: phase ? -geo.size.height * 0.30 : -geo.size.height * 0.15)
                     blob(Theme.purple, size: 460)
                         .offset(x: phase ? geo.size.width * 0.35 : geo.size.width * 0.15,
                                 y: phase ? geo.size.height * 0.25 : geo.size.height * 0.40)
-                    blob(Theme.cyan, size: 380)
-                        .offset(x: phase ? geo.size.width * 0.05 : -geo.size.width * 0.20,
-                                y: phase ? geo.size.height * 0.45 : geo.size.height * 0.20)
                 }
                 .frame(width: geo.size.width, height: geo.size.height)
             }
-            .opacity(0.30)
+            .opacity(0.16)
         }
         .ignoresSafeArea()
         .onAppear {

@@ -12,7 +12,7 @@ func render(_ px: Int) -> Data {
     NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
     let rect = NSRect(x: s * 0.07, y: s * 0.07, width: s * 0.86, height: s * 0.86)
     let tile = NSBezierPath(roundedRect: rect, xRadius: s * 0.2, yRadius: s * 0.2)
-    NSGradient(colors: [NSColor(red: 0.05, green: 0.06, blue: 0.16, alpha: 1), NSColor(red: 0.17, green: 0.10, blue: 0.36, alpha: 1)])!.draw(in: tile, angle: -60)
+    NSGradient(colors: [NSColor(red: 0.06, green: 0.08, blue: 0.14, alpha: 1), NSColor(red: 0.10, green: 0.16, blue: 0.30, alpha: 1)])!.draw(in: tile, angle: -60)
 
     // gradient ring: draw gradient clipped to an annulus
     let c = NSPoint(x: s / 2, y: s / 2)
@@ -23,7 +23,7 @@ func render(_ px: Int) -> Data {
     annulus.appendOval(in: NSRect(x: c.x - ringR + w / 2, y: c.y - ringR + w / 2, width: (ringR - w / 2) * 2, height: (ringR - w / 2) * 2))
     annulus.windingRule = .evenOdd
     annulus.addClip()
-    NSGradient(colors: [NSColor(red: 0.24, green: 0.84, blue: 1, alpha: 1), NSColor(red: 0.64, green: 0.42, blue: 1, alpha: 1), NSColor(red: 1, green: 0.42, blue: 0.72, alpha: 1)])!
+    NSGradient(colors: [NSColor(red: 0.55, green: 0.76, blue: 1, alpha: 1), NSColor(red: 0.38, green: 0.64, blue: 1, alpha: 1), NSColor(red: 0.28, green: 0.52, blue: 0.96, alpha: 1)])!
         .draw(in: rect, angle: -45)
     NSGraphicsContext.restoreGraphicsState()
 
