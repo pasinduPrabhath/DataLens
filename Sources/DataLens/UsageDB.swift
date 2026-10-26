@@ -93,7 +93,29 @@ final class UsageDB: @unchecked Sendable {
         db.exec("CREATE INDEX IF NOT EXISTS usage_hour ON usage(hour)")
         db.exec("CREATE TABLE IF NOT EXISTS storage_hist(ts INTEGER PRIMARY KEY, total INTEGER, free INTEGER, purgeable INTEGER)")
         db.exec("CREATE TABLE IF NOT EXISTS scan_snap(ts INTEGER, key TEXT, bytes INTEGER)")
-        if Demo.on { Demo.seed(self) }
+        if Demo.on { Demo.seed(self) } else { repairInflatedApps() }
+    }
+
+    /// Versions up to 1.0.0 could count a process's lifetime traffic more than once, so per-app rows could exceed
+    /// the real interface total for that hour. Scale them back proportionally (the totals table is accurate).
+    private func repairInflatedApps() {
+        let key = "appsRepairedV1"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        let rows = db.query("""
+        SELECT u.hour AS hour, u.ssid AS ssid, SUM(u.bin + u.bout) AS s, t.bin + t.bout AS tot
+        FROM usage u JOIN totals t ON t.hour = u.hour AND t.ssid = u.ssid
+        GROUP BY u.hour, u.ssid HAVING SUM(u.bin + u.bout) > t.bin + t.bout
+        """)
+        db.transaction {
+            for r in rows where r.dbl("s") > 0 {
+                let f = r.dbl("tot") / r.dbl("s")
+                db.exec("UPDATE usage SET bin = CAST(bin * ? AS INTEGER), bout = CAST(bout * ? AS INTEGER) WHERE hour = ? AND ssid = ?",
+                        [f, f, r.int("hour"), r.str("ssid")])
+            }
+        }
+        // per-app rows for hours that have no interface total at all cannot be trusted
+        db.exec("DELETE FROM usage WHERE NOT EXISTS (SELECT 1 FROM totals t WHERE t.hour = usage.hour AND t.ssid = usage.ssid)")
+        UserDefaults.standard.set(true, forKey: key)
     }
 
     // MARK: Writes

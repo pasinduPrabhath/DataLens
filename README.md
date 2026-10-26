@@ -31,13 +31,13 @@ Shown with demo data, not real usage.
 
 ## Install
 
-1. Download **DataLens-1.0.0.dmg** from the [latest release](https://github.com/pasinduPrabhath/DataLens/releases/latest) (macOS 14+, Apple Silicon and Intel).
+1. Download the latest **DataLens-x.y.z.dmg** from the [latest release](https://github.com/pasinduPrabhath/DataLens/releases/latest) (macOS 14+, Apple Silicon and Intel).
 2. Open it and drag **DataLens** into **Applications**.
 3. The app is not notarized by Apple (no paid developer account), so the first launch is blocked. Either:
    - open **System Settings → Privacy & Security** and click **Open Anyway**, or
    - run `xattr -dr com.apple.quarantine /Applications/DataLens.app` in Terminal.
 
-Then allow **Location** when asked and turn on **Start at login** in Settings.
+Then allow **Location** when asked and turn on **Start at login** in Settings. DataLens checks GitHub for new releases and offers a one-click update (Settings → Updates).
 
 ## Build from source
 

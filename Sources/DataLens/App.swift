@@ -8,6 +8,7 @@ final class AppEnv: ObservableObject {
     let net: NetStore
     let storage: StorageStore
     let ssd = SSDMonitor()
+    let updater = Updater()
 
     init() {
         monitor = NetworkMonitor(usage: usage)
@@ -38,6 +39,7 @@ struct DataLensApp: App {
                 .environmentObject(env.net)
                 .environmentObject(env.storage)
                 .environmentObject(env.ssd)
+                .environmentObject(env.updater)
                 .frame(minWidth: 1180, minHeight: 760)
                 .preferredColorScheme(.dark)
         }

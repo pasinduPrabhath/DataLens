@@ -61,6 +61,7 @@ final class NetworkMonitor: NSObject, ObservableObject, CLLocationManagerDelegat
     private var flushTimer: Timer?
     private var nettopBusy = false
     private var prevProc: [String: (Double, Double)] = [:]
+    private var nettopPrimed = false
     private var lastNettop = Date()
 
     private var pendingTotals: [String: (hour: Int, ssid: String, bin: Double, bout: Double)] = [:]
@@ -249,26 +250,38 @@ final class NetworkMonitor: NSObject, ObservableObject, CLLocationManagerDelegat
         let now = Date()
         let dt = max(now.timeIntervalSince(lastNettop), 1)
         lastNettop = now
-        let primed = !prevProc.isEmpty
-        var seen: [String: (Double, Double)] = [:]
+        let primed = nettopPrimed
+        nettopPrimed = true
+        var seen = Set<String>()
         var byApp: [String: (Double, Double)] = [:]
 
         for line in out.split(separator: "\n").dropFirst() {
             let f = line.split(separator: ",", omittingEmptySubsequences: false)
             guard f.count >= 3, let bi = Double(f[1]), let bo = Double(f[2]) else { continue }
             let procKey = String(f[0])
-            seen[procKey] = (bi, bo)
-            guard primed else { continue }
-            let prev = prevProc[procKey] ?? (0, 0)
+            seen.insert(procKey)
+
+            // nettop counters are cumulative since each process started. The baseline must survive
+            // a process dropping out of the list, otherwise its whole history is counted again.
+            let prev: (Double, Double)
+            if let p = prevProc[procKey] {
+                prev = p
+            } else if primed && Self.startedRecently(procKey, within: dt + 15) {
+                prev = (0, 0)          // brand-new process: all of its traffic is new
+            } else {
+                prev = (bi, bo)        // already running before we looked: just set a baseline
+            }
+            prevProc[procKey] = (bi, bo)
+
             let di = bi >= prev.0 ? bi - prev.0 : bi
             let dOut = bo >= prev.1 ? bo - prev.1 : bo
-            guard di > 0 || dOut > 0 else { continue }
+            guard primed, di > 0 || dOut > 0 else { continue }
             let app = Self.canonicalName(procKey)
             var e = byApp[app] ?? (0, 0)
             e.0 += di; e.1 += dOut
             byApp[app] = e
         }
-        prevProc = seen
+        if prevProc.count > 4000 { prevProc = prevProc.filter { seen.contains($0.key) } }
         guard primed else { return }
 
         let hour = Int(now.timeIntervalSince1970 / 3600) * 3600
@@ -283,6 +296,14 @@ final class NetworkMonitor: NSObject, ObservableObject, CLLocationManagerDelegat
         talkers = byApp.map { TalkerRate(name: $0.key, down: $0.value.0 / dt, up: $0.value.1 / dt) }
             .sorted { $0.total > $1.total }
             .prefix(8).map { $0 }
+    }
+
+    private static func startedRecently(_ procKey: String, within seconds: TimeInterval) -> Bool {
+        guard let dot = procKey.lastIndex(of: "."), let pid = Int32(procKey[procKey.index(after: dot)...]) else { return false }
+        var info = proc_bsdinfo()
+        let size = Int32(MemoryLayout<proc_bsdinfo>.size)
+        guard proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &info, size) == size else { return false }
+        return Date().timeIntervalSince1970 - TimeInterval(info.pbi_start_tvsec) < seconds
     }
 
     private static func canonicalName(_ procKey: String) -> String {
