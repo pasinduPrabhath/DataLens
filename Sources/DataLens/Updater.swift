@@ -64,6 +64,7 @@ final class Updater: ObservableObject {
             latest = ReleaseInfo(version: version, notes: (json["body"] as? String) ?? "", dmgURL: url,
                                  pageURL: URL(string: (json["html_url"] as? String) ?? "https://github.com/\(Self.repo)/releases")!)
             state = .available
+            if ProcessInfo.processInfo.environment["DATALENS_UPDATE_TEST"] != nil { install() }   // developer aid
         } catch {
             state = .failed(Self.describe(error))
         }
