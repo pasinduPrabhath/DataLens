@@ -31,6 +31,7 @@ struct RootView: View {
     @State private var page: Page = Page(rawValue: ProcessInfo.processInfo.environment["DATALENS_PAGE"] ?? "") ?? .overview
     @Namespace private var ns
     @EnvironmentObject var storageStore: StorageStore
+    @EnvironmentObject var updater: Updater
 
     var body: some View {
         HStack(spacing: 0) {
@@ -98,6 +99,7 @@ struct RootView: View {
             group("STORAGE", [.storage, .apps, .cleanup, .ssd])
             Spacer()
             group("", [.settings])
+                .overlay(alignment: .topTrailing) { if updater.updateAvailable { Circle().fill(Theme.cyan).frame(width: 9, height: 9).padding(.top, 12).padding(.trailing, 14) } }
                 .padding(.bottom, 14)
         }
         .padding(.horizontal, 12)
@@ -160,6 +162,7 @@ struct OverviewView: View {
     @EnvironmentObject var net: NetStore
     @EnvironmentObject var storage: StorageStore
     @EnvironmentObject var ssd: SSDMonitor
+    @EnvironmentObject var updater: Updater
     var go: (Page) -> Void
 
     @State private var today = (down: 0.0, up: 0.0)
@@ -179,6 +182,8 @@ struct OverviewView: View {
                     Spacer()
                     Pill(text: monitor.wifi.ssid ?? monitor.currentKey, color: Theme.cyan)
                 }
+
+                UpdateBanner()
 
                 HStack(spacing: 14) {
                     StatTile(title: "Used today", value: today.down + today.up, format: { Fmt.bytes($0) }, icon: "sun.max.fill", color: Theme.cyan,
@@ -336,6 +341,8 @@ struct SettingsView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .card()
+
+                UpdateSettingsCard()
 
                 VStack(alignment: .leading, spacing: 10) {
                     SectionTitle(title: "How the numbers are collected", icon: "questionmark.circle.fill")
