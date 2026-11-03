@@ -89,10 +89,7 @@ struct RootView: View {
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 10) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Theme.accent).frame(width: 34, height: 34)
-                    Image(systemName: "scope").font(.system(size: 17, weight: .bold)).foregroundStyle(.white)
-                }
+                Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 38, height: 38)
                 Text("DataLens").font(.system(size: 20, weight: .bold, design: .rounded))
             }
             .padding(.top, 44).padding(.bottom, 18).padding(.horizontal, 10)
