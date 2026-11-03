@@ -92,11 +92,9 @@ struct HistoryView: View {
             Spacer()
             HStack(spacing: 8) {
                 Text("From").font(.caption).foregroundStyle(.secondary)
-                DatePicker("", selection: Binding(get: { from }, set: { from = cal.startOfDay(for: $0); if from > to { to = from } }), in: ...Date(), displayedComponents: .date)
-                    .labelsHidden().datePickerStyle(.compact)
+                DayPickerButton(date: Binding(get: { from }, set: { from = cal.startOfDay(for: $0); if from > to { to = from } }))
                 Text("to").font(.caption).foregroundStyle(.secondary)
-                DatePicker("", selection: Binding(get: { to }, set: { to = cal.startOfDay(for: $0); if to < from { from = to } }), in: ...Date(), displayedComponents: .date)
-                    .labelsHidden().datePickerStyle(.compact)
+                DayPickerButton(date: Binding(get: { to }, set: { to = cal.startOfDay(for: $0); if to < from { from = to } }))
             }
         }
     }
@@ -234,8 +232,7 @@ struct HistoryView: View {
                 Button { shiftDay(1) } label: { Image(systemName: "chevron.right") }.buttonStyle(GlowButtonStyle(color: Theme.blue))
                     .disabled(cal.isDateInToday(selectedDay))
                 Spacer()
-                DatePicker("", selection: Binding(get: { selectedDay }, set: { selectedDay = cal.startOfDay(for: $0) }), in: ...Date(), displayedComponents: .date)
-                    .labelsHidden().datePickerStyle(.compact)
+                DayPickerButton(date: Binding(get: { selectedDay }, set: { selectedDay = cal.startOfDay(for: $0) }))
                 Button("Today") { withAnimation { selectedDay = Self.today } }.buttonStyle(GlowButtonStyle(color: Theme.cyan))
             }
 
@@ -415,5 +412,96 @@ struct DayLogRow: View {
         .contentShape(Rectangle())
         .onHover { hover = $0 }
         .animation(.easeOut(duration: 0.15), value: hover)
+    }
+}
+
+
+// MARK: - Themed calendar
+
+struct DayPickerButton: View {
+    @Binding var date: Date
+    @State private var open = false
+
+    var body: some View {
+        Button { open.toggle() } label: {
+            HStack(spacing: 7) {
+                Image(systemName: "calendar").font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.accent)
+                Text(date.formatted(.dateTime.day().month(.abbreviated).year())).font(.system(size: 12, weight: .semibold, design: .rounded)).monospacedDigit()
+            }
+            .padding(.horizontal, 11).padding(.vertical, 6)
+            .background(Capsule().fill(Color.white.opacity(0.07)))
+            .overlay(Capsule().stroke(Color.white.opacity(0.10), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .popover(isPresented: $open, arrowEdge: .bottom) {
+            MonthCalendar(selection: $date) { open = false }
+        }
+    }
+}
+
+struct MonthCalendar: View {
+    @Binding var selection: Date
+    var onPick: () -> Void
+    @State private var month: Date = Date()
+    private let cal = Calendar.current
+
+    private var days: [Date?] {
+        guard let start = cal.date(from: cal.dateComponents([.year, .month], from: month)),
+              let range = cal.range(of: .day, in: .month, for: start) else { return [] }
+        let lead = (cal.component(.weekday, from: start) - cal.firstWeekday + 7) % 7
+        return Array(repeating: nil, count: lead) + range.compactMap { cal.date(byAdding: .day, value: $0 - 1, to: start) }
+    }
+
+    private var isCurrentMonth: Bool { cal.isDate(month, equalTo: Date(), toGranularity: .month) }
+
+    var body: some View {
+        VStack(spacing: 10) {
+            HStack {
+                Text(month.formatted(.dateTime.month(.wide).year())).font(.system(size: 14, weight: .bold, design: .rounded))
+                Spacer()
+                navButton("chevron.left") { shift(-1) }
+                navButton("chevron.right") { shift(1) }.disabled(isCurrentMonth).opacity(isCurrentMonth ? 0.3 : 1)
+            }
+            let symbols = cal.veryShortWeekdaySymbols
+            let order = (0..<7).map { symbols[(cal.firstWeekday - 1 + $0) % 7] }
+            LazyVGrid(columns: Array(repeating: GridItem(.fixed(32), spacing: 4), count: 7), spacing: 4) {
+                ForEach(Array(order.enumerated()), id: \.offset) { _, s in
+                    Text(s).font(.system(size: 10, weight: .semibold)).foregroundStyle(.secondary).frame(height: 18)
+                }
+                ForEach(Array(days.enumerated()), id: \.offset) { _, d in
+                    if let d { dayCell(d) } else { Color.clear.frame(height: 32) }
+                }
+            }
+            Button("Today") { selection = Date(); onPick() }.buttonStyle(GlowButtonStyle(color: Theme.cyan))
+        }
+        .padding(14)
+        .frame(width: 270)
+        .onAppear { month = selection }
+    }
+
+    private func navButton(_ icon: String, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon).font(.system(size: 11, weight: .bold)).frame(width: 24, height: 24)
+                .background(Circle().fill(Color.white.opacity(0.08)))
+        }.buttonStyle(.plain)
+    }
+
+    private func dayCell(_ d: Date) -> some View {
+        let selected = cal.isDate(d, inSameDayAs: selection)
+        let future = d > Date()
+        let today = cal.isDateInToday(d)
+        return Button { selection = d; onPick() } label: {
+            Text("\(cal.component(.day, from: d))")
+                .font(.system(size: 12, weight: selected ? .bold : .medium, design: .rounded)).monospacedDigit()
+                .foregroundStyle(selected ? Color.white : (future ? Color.secondary.opacity(0.4) : Color.primary))
+                .frame(width: 32, height: 32)
+                .background(Circle().fill(selected ? Theme.blue : Color.clear))
+                .overlay(Circle().stroke(today && !selected ? Theme.blue : Color.clear, lineWidth: 1.2))
+        }
+        .buttonStyle(.plain).disabled(future)
+    }
+
+    private func shift(_ n: Int) {
+        if let m = cal.date(byAdding: .month, value: n, to: month) { withAnimation(.easeInOut(duration: 0.15)) { month = m } }
     }
 }
