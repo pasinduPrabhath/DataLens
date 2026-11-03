@@ -293,3 +293,46 @@ final class UsageDB: @unchecked Sendable {
         return (Date(timeIntervalSince1970: TimeInterval(ts)), d)
     }
 }
+
+// MARK: - History (per day, per network)
+
+struct NetDay: Identifiable {
+    var id: String { "\(date.timeIntervalSince1970)|\(ssid)" }
+    let date: Date
+    let ssid: String
+    var down: Double
+    var up: Double
+    var total: Double { down + up }
+}
+
+extension UsageDB {
+    /// Usage grouped by calendar bucket (hour/day) and network name for [from, to).
+    func usageBySSID(from: Date, to: Date, component: Calendar.Component) -> [NetDay] {
+        let cal = Calendar.current
+        let rows = db.query("SELECT hour, ssid, SUM(bin) AS bi, SUM(bout) AS bo FROM totals WHERE hour >= ? AND hour < ? GROUP BY hour, ssid",
+                            [Int(from.timeIntervalSince1970), Int(to.timeIntervalSince1970)])
+        var map: [String: NetDay] = [:]
+        for r in rows {
+            let d = Date(timeIntervalSince1970: r.dbl("hour"))
+            let key = cal.dateInterval(of: component, for: d)?.start ?? d
+            let ssid = r.str("ssid")
+            let k = "\(key.timeIntervalSince1970)|\(ssid)"
+            var e = map[k] ?? NetDay(date: key, ssid: ssid, down: 0, up: 0)
+            e.down += r.dbl("bi"); e.up += r.dbl("bo")
+            map[k] = e
+        }
+        return map.values.sorted { $0.date < $1.date }
+    }
+
+    func appsBetween(from: Date, to: Date) -> [AppUsage] {
+        db.query("SELECT app, SUM(bin) AS bi, SUM(bout) AS bo FROM usage WHERE hour >= ? AND hour < ? GROUP BY app ORDER BY SUM(bin)+SUM(bout) DESC LIMIT 40",
+                 [Int(from.timeIntervalSince1970), Int(to.timeIntervalSince1970)])
+            .map { AppUsage(name: $0.str("app"), down: $0.dbl("bi"), up: $0.dbl("bo")) }
+            .filter { $0.total > 0 }
+    }
+
+    func trackedRange() -> (Date, Date)? {
+        guard let r = db.query("SELECT MIN(hour) AS a, MAX(hour) AS b FROM totals").first, r.dbl("a") > 0 else { return nil }
+        return (Date(timeIntervalSince1970: r.dbl("a")), Date(timeIntervalSince1970: r.dbl("b")))
+    }
+}
