@@ -11,12 +11,13 @@ Shown with demo data, not real usage.
 | ![Overview](docs/screenshots/overview.png) **Overview** | ![Wi-Fi usage](docs/screenshots/wifi-usage.png) **Wi-Fi usage per network and app** |
 | ![Live network](docs/screenshots/live-network.png) **Live network** | ![Storage](docs/screenshots/storage.png) **Storage breakdown** |
 | ![Apps and space](docs/screenshots/apps.png) **Apps and their space** | ![Free up space](docs/screenshots/free-up-space.png) **Free up space** |
-| ![SSD health](docs/screenshots/ssd-health.png) **SSD health** | |
+| ![SSD health](docs/screenshots/ssd-health.png) **SSD health** | ![History](docs/screenshots/history.png) **History: where you were, day by day** |
 
 ## Features
 
 **Network**
 - Data usage per Wi-Fi network (by SSID) for 24 h / 7 d / 30 d / 12 months / all time
+- **History:** pick any date range or single day to see usage by Wi-Fi network, a 24-hour "where you were" strip and top apps
 - Per-app breakdown, hourly heatmap, monthly budget ring, auto-generated insights
 - Live up/down speed, signal details, apps talking right now, menu-bar readout
 
