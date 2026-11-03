@@ -5,6 +5,7 @@ import ServiceManagement
 enum Page: String, CaseIterable, Identifiable {
     case overview = "Overview"
     case wifi = "Wi-Fi Usage"
+    case history = "History"
     case live = "Live Network"
     case storage = "Storage"
     case apps = "Apps & Space"
@@ -17,6 +18,7 @@ enum Page: String, CaseIterable, Identifiable {
         switch self {
         case .overview: return "square.grid.2x2.fill"
         case .wifi: return "wifi"
+        case .history: return "calendar"
         case .live: return "dot.radiowaves.left.and.right"
         case .storage: return "internaldrive.fill"
         case .apps: return "app.badge.fill"
@@ -42,6 +44,7 @@ struct RootView: View {
                     switch page {
                     case .overview: OverviewView(go: { page = $0 })
                     case .wifi: NetworkUsageView()
+                    case .history: HistoryView()
                     case .live: LiveView()
                     case .storage: StorageView()
                     case .apps: StorageAppsView()
@@ -95,7 +98,7 @@ struct RootView: View {
             .padding(.top, 44).padding(.bottom, 18).padding(.horizontal, 10)
 
             group("", [.overview])
-            group("NETWORK", [.wifi, .live])
+            group("NETWORK", [.wifi, .history, .live])
             group("STORAGE", [.storage, .apps, .cleanup, .ssd])
             Spacer()
             group("", [.settings])
